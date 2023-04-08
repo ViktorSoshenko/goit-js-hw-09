@@ -1,0 +1,2 @@
+const e=document.querySelector(".form"),o=document.querySelector("input[name=delay]"),t=document.querySelector("input[name=step]"),n=document.querySelector("input[name=amount]");e.addEventListener("submit",(function(e){e.preventDefault(),console.log(typeof o);for(let e=n.value;e>0;e++)(o.value,t.value,void Math.random()).then((({position:e,delay:n})=>{console.log(`✅ Fulfilled promise ${o.value} in ${t.value}ms`)}))}));
+//# sourceMappingURL=03-promises.2db27ae1.js.map
