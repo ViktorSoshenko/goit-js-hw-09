@@ -21,17 +21,17 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+    // console.log(selectedDates[0]);
 
     let newDateMls = selectedDates[0].getTime();
     if (newDateMls <= date.getTime()) {
-      alert('Please choose a date in the future');
+      Notiflix.Notify.failure('Please choose a date in the future');
     } else {
       button.disabled = false;
       button.addEventListener('click', () => {
         timerId = setInterval(() => {
           const ms = newDateMls - date.getTime();
-          console.log(ms);
+          // console.log(ms);
           convertMs(ms);
           stopTimer(ms);
           date = new Date();
@@ -40,13 +40,6 @@ const options = {
     }
   },
 };
-
-// function stopTimer() {
-//   if ((ms = 0)) {
-//     clearInterval(timerId);
-//     console.log('dgfggfgfg');
-//   }
-// }
 
 const fp = flatpickr('#datetime-picker', options);
 
@@ -71,25 +64,16 @@ function convertMs(ms) {
   spanMinutes.textContent = `${addLeadingZero(minutes)} :`;
   spanSecond.textContent = `${addLeadingZero(seconds)}`;
 
-  //   console.log(addLeadingZero(days));
-  //   console.log(addLeadingZero(hours));
-  //   console.log(addLeadingZero(minutes));
-  //   console.log(addLeadingZero(seconds));
   return { days, hours, minutes, seconds };
 } // {days: 0, hours: 0, minutes: 0, seconds: 2}
 
 function addLeadingZero(value) {
-  //   if (value < 0) {
-  //     // alert('Настав той час !!!');
-  //     // return;
-  //     console.log('jhhhhjjhjjhjhhjjh');
-  //   }
-
   return String(value).padStart(2, '0');
 }
 function stopTimer(value) {
   if (spanSecond.textContent < 1) {
     console.log('OVER');
+    Notiflix.Notify.success('OVER');
     clearInterval(timerId);
   }
 }

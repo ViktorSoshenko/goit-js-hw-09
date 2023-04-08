@@ -8,6 +8,7 @@ const startBtn = document.querySelector('button[data-start]');
 const stopBtn = document.querySelector('button[data-stop]');
 let timerId = null;
 startBtn.addEventListener('click', () => {
+  console.log('START');
   timerId = setInterval(randomCollor, 1000);
 });
 startBtn.addEventListener('click', disabledTrue);
@@ -26,6 +27,6 @@ function stopColor(event) {
   clearInterval(timerId);
   startBtn.disabled = false;
   stopBtn.disabled = true;
-  console.log('wert');
+
+  console.log('готово');
 }
-console.log('готово');
