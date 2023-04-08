@@ -1,31 +1,52 @@
+import Notiflix from 'notiflix';
+
 function createPromise(position, delay) {
   const shouldResolve = Math.random() > 0.3;
-
-  if (shouldResolve) {
-    // Fulfill
-  } else {
-    // Reject
-  }
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve({ position, delay });
+        // Fulfill
+      } else {
+        reject({ position, delay });
+        // Reject
+      }
+    }, delay);
+  });
 }
 
 const form = document.querySelector('.form');
 // const button = document.querySelector('button[type=submit]');
-const inputDelay = document.querySelector('input[name=delay]');
-const inputStep = document.querySelector('input[name=step]');
-const inputAmount = document.querySelector('input[name=amount]');
 
 form.addEventListener('submit', causeFunktion);
-
+console.log(form);
 function causeFunktion(event) {
   event.preventDefault();
-  console.log(typeof inputDelay);
-  for (let i = inputAmount.value; i > 0; i++) {
-    createPromise(inputDelay.value, inputStep.value).then(
-      ({ position, delay }) => {
-        console.log(
-          `✅ Fulfilled promise ${inputDelay.value} in ${inputStep.value}ms`
+  let {
+    elements: { delay, step, amount },
+  } = event.currentTarget;
+  let inputDelay = Number(delay.value);
+  let inputStep = Number(step.value);
+  let inputAmount = Number(amount.value);
+  if (inputDelay < 0 || inputStep < 0 || inputAmount <= 0) {
+    Notiflix.Notify.warning('All data mast be positive');
+    return;
+  }
+  for (let i = 0; i < inputAmount; i += 1) {
+    let position = i + 1;
+    let deleys = inputDelay + inputStep * i;
+
+    createPromise(position, deleys)
+      .then(({ position, delay }) => {
+        Notiflix.Notify.success(
+          `✅ Fulfilled promise ${position} in ${delay}ms`
         );
-      }
-    );
+      })
+      .catch(({ position, delay }) => {
+        Notiflix.Notify.failure(
+          `❌ Rejected promise ${position} in ${delay}ms`
+        );
+      });
+    // inputDelay += inputStep;
   }
 }
