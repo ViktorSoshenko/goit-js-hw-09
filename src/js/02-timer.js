@@ -1,4 +1,5 @@
 import flatpickr from 'flatpickr';
+import Notiflix from 'notiflix';
 import 'flatpickr/dist/flatpickr.min.css';
 const input = document.querySelector('#datetime-picker');
 const button = document.querySelector('[data-start]');
@@ -6,37 +7,51 @@ const spanDays = document.querySelector('[data-days]');
 const spanHours = document.querySelector('[data-hours]');
 const spanMinutes = document.querySelector('[data-minutes]');
 const spanSecond = document.querySelector('[data-seconds]');
+const divBlock = document.querySelector('.field');
+const divflex = document.querySelector('.timer');
 
+divflex.style.display = 'flex';
+
+button.disabled = true;
 let date = new Date();
-
+let timerId = null;
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-
   onClose(selectedDates) {
     console.log(selectedDates[0]);
-    const sel = selectedDates[0].getTime();
-    // console.log(sel);
+
     let newDateMls = selectedDates[0].getTime();
     if (newDateMls <= date.getTime()) {
-      button.disabled = true;
       alert('Please choose a date in the future');
     } else {
       button.disabled = false;
-      let ms = newDateMls - date.getTime();
-      console.log('getMonth(): ', date.getMonth());
-      convertMs(ms);
+      button.addEventListener('click', () => {
+        timerId = setInterval(() => {
+          const ms = newDateMls - date.getTime();
+          console.log(ms);
+          convertMs(ms);
+          stopTimer(ms);
+          date = new Date();
+        }, 1000);
+      });
     }
   },
 };
+
+// function stopTimer() {
+//   if ((ms = 0)) {
+//     clearInterval(timerId);
+//     console.log('dgfggfgfg');
+//   }
+// }
 
 const fp = flatpickr('#datetime-picker', options);
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
-
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
@@ -44,7 +59,6 @@ function convertMs(ms) {
 
   // Remaining days
   const days = Math.floor(ms / day);
-
   // Remaining hours
   const hours = Math.floor((ms % day) / hour);
   // Remaining minutes
@@ -53,11 +67,29 @@ function convertMs(ms) {
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
   spanDays.textContent = days;
-  spanHours.textContent = hours;
-  spanMinutes.textContent = minutes;
-  spanSecond.textContent = seconds;
+  spanHours.textContent = `${addLeadingZero(hours)} :`;
+  spanMinutes.textContent = `${addLeadingZero(minutes)} :`;
+  spanSecond.textContent = `${addLeadingZero(seconds)}`;
 
+  //   console.log(addLeadingZero(days));
+  //   console.log(addLeadingZero(hours));
+  //   console.log(addLeadingZero(minutes));
+  //   console.log(addLeadingZero(seconds));
   return { days, hours, minutes, seconds };
-}
+} // {days: 0, hours: 0, minutes: 0, seconds: 2}
 
-button.addEventListener('click', convertMs);
+function addLeadingZero(value) {
+  //   if (value < 0) {
+  //     // alert('Настав той час !!!');
+  //     // return;
+  //     console.log('jhhhhjjhjjhjhhjjh');
+  //   }
+
+  return String(value).padStart(2, '0');
+}
+function stopTimer(value) {
+  if (spanSecond.textContent < 1) {
+    console.log('OVER');
+    clearInterval(timerId);
+  }
+}
